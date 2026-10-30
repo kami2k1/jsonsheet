@@ -1,0 +1,22 @@
+# Dependencies & builds
+node_modules/
+.next/
+out/
+dist/
+.astro/
+*.tsbuildinfo
+next-env.d.ts
+
+# Logs & OS
+*.log
+.DS_Store
+Thumbs.db
+
+# Monitoring output
+monitor.log
+
+# Internal docs & ops — NEVER publish
+docs/
+PROJECT_STATUS.md
+CHANGELOG.md
+monitor.log

@@ -114,6 +114,8 @@ export default function ChatGptJsonToCsvGuide() {
           <a className="card" href="/tools/json-to-markdown/"><span className="tag">JSON → MD</span><h3>JSON to Markdown</h3><p>GitHub-ready tables for READMEs and docs.</p></a>
           <a className="card" href="/tools/json-to-sql/"><span className="tag">JSON → SQL</span><h3>JSON to SQL</h3><p>INSERT statements with CREATE TABLE.</p></a>
           <a className="card" href="/tools/tsv-to-json/"><span className="tag">TSV → JSON</span><h3>TSV to JSON</h3><p>Paste straight from Excel or Sheets.</p></a>
+          <a className="card" href="/tools/json-to-yaml/"><span className="tag">JSON → YAML</span><h3>JSON to YAML</h3><p>Config-file friendly output, quotes done right.</p></a>
+          <a className="card" href="/tools/base64-text/"><span className="tag">BASE64</span><h3>Base64 Encode/Decode</h3><p>UTF-8 safe text encoding in one click.</p></a>
         </div>
       </section>
 

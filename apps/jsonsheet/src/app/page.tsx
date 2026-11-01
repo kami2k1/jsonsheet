@@ -4,7 +4,7 @@ import { tools } from '@/data/tools';
 export const metadata: Metadata = {
   title: { absolute: 'JSONSheet — Free JSON, CSV, Markdown & SQL Converters (In-Browser)' },
   description:
-    'Convert JSON to CSV, CSV to JSON, Markdown tables, SQL inserts and TypeScript interfaces — free, instant, 100% in your browser. No signup, no upload.',
+    'Convert JSON to CSV, CSV to JSON, Markdown tables, YAML, XML, JSONL, SQL inserts, TypeScript interfaces and Base64 — free, instant, 100% in your browser. No signup, no upload.',
   alternates: { canonical: '/' },
 };
 

@@ -5,7 +5,8 @@
 export type OptionDef =
   | { id: string; label: string; type: 'select'; choices: { value: string; label: string }[]; default: string }
   | { id: string; label: string; type: 'toggle'; default: boolean }
-  | { id: string; label: string; type: 'text'; default: string; placeholder?: string };
+  | { id: string; label: string; type: 'text'; default: string; placeholder?: string }
+  | { id: string; label: string; type: 'number'; default: number; min?: number; max?: number };
 
 export interface Faq {
   q: string;
@@ -17,8 +18,9 @@ export interface ToolDef {
   name: string; // short card label
   title: string; // <title> + H1
   description: string; // meta description
-  inputLang: 'json' | 'csv' | 'markdown' | 'tsv' | 'text' | 'yaml';
-  outputLang: 'csv' | 'json' | 'markdown' | 'sql' | 'ts' | 'text' | 'yaml' | 'html' | 'xml' | 'jsonl';
+  inputLang: 'json' | 'csv' | 'markdown' | 'tsv' | 'text' | 'yaml' | 'image';
+  outputLang: 'csv' | 'json' | 'markdown' | 'sql' | 'ts' | 'text' | 'yaml' | 'html' | 'xml' | 'jsonl' | 'report' | 'image';
+  inputKind?: 'text' | 'image'; // default: text
   fn: string;
   fixAi: boolean; // offer "fix AI output" preprocessing
   options: OptionDef[];
@@ -1002,6 +1004,165 @@ score,99,98`,
       {
         q: 'Are line breaks in the Base64 input OK?',
         a: 'Yes — whitespace is ignored when decoding.',
+      },
+    ],
+  },
+  {
+    slug: 'ai-image-detector',
+    name: 'AI Image Detector',
+    title: 'AI Image Detector — Check if a Photo is AI-Generated (No Upload)',
+    description:
+      'Detect AI-generated images by analyzing EXIF, XMP, C2PA Content Credentials and generator signatures — 100% in your browser. Your photo is never uploaded.',
+    inputLang: 'image',
+    outputLang: 'report',
+    inputKind: 'image',
+    fn: 'aiImageDetector',
+    fixAi: false,
+    options: [],
+    example: { input: '' },
+    howto: [
+      'Drop a JPEG/PNG/WebP image into the box — analysis is instant.',
+      'Read the verdict: AI generator signatures, C2PA manifest, camera EXIF or inconclusive.',
+      'Nothing is uploaded — the file is analyzed entirely inside your browser.',
+    ],
+    faqs: [
+      {
+        q: 'How accurate is this detector?',
+        a: 'It reads metadata evidence: generator signatures (Midjourney, DALL·E, Stable Diffusion, Firefly…), C2PA Content Credentials and camera EXIF. Untouched AI files are detected with high confidence; files that were re-saved or stripped are inconclusive — any tool claiming 100% accuracy is overpromising.',
+      },
+      {
+        q: 'Is my photo uploaded to a server?',
+        a: 'Never. Unlike most AI detectors, this tool parses the file in your browser with JavaScript. Nothing leaves your device — safe for private or sensitive images.',
+      },
+      {
+        q: 'What is C2PA / Content Credentials?',
+        a: 'An industry standard that embeds provenance (how an image was created/edited) into the file. If present, this tool flags it so you can verify the full history at contentcredentials.org.',
+      },
+    ],
+  },
+  {
+    slug: 'image-metadata-viewer',
+    name: 'EXIF Viewer',
+    title: 'Image Metadata & EXIF Viewer Online — Free, Private, In-Browser',
+    description:
+      'View all hidden metadata in your photos: EXIF camera data, GPS location, XMP, PNG text chunks, C2PA — instantly, 100% in your browser. No upload.',
+    inputLang: 'image',
+    outputLang: 'report',
+    inputKind: 'image',
+    fn: 'imageMetadataViewer',
+    fixAi: false,
+    options: [],
+    example: { input: '' },
+    howto: [
+      'Drop a JPEG/PNG/WebP photo.',
+      'See every EXIF field, XMP packet, text chunk and file structure.',
+      'Check what you share before posting — especially GPS/location data.',
+    ],
+    faqs: [
+      {
+        q: 'What kind of metadata do photos contain?',
+        a: 'Camera make/model, date/time, GPS coordinates, software used, editing history (XMP), and sometimes AI generation parameters. Social networks strip most of it — original files often keep everything.',
+      },
+      {
+        q: 'Can I see where a photo was taken?',
+        a: 'If GPS EXIF fields exist they appear in the dump. Many phones embed location by default — check before sharing originals publicly.',
+      },
+      {
+        q: 'Is the photo uploaded anywhere?',
+        a: 'No — parsing happens 100% in your browser.',
+      },
+    ],
+  },
+  {
+    slug: 'image-metadata-cleaner',
+    name: 'Metadata Cleaner',
+    title: 'Remove EXIF & Metadata from Photos Online — Free & Private',
+    description:
+      'Strip EXIF, GPS location, XMP and C2PA metadata from images before sharing — re-encoded from raw pixels in your browser. Free, instant, no upload.',
+    inputLang: 'image',
+    outputLang: 'image',
+    inputKind: 'image',
+    fn: 'imageMetadataCleaner',
+    fixAi: false,
+    options: [
+      {
+        id: 'format',
+        label: 'Output format',
+        type: 'select',
+        choices: [
+          { value: 'auto', label: 'Same as original' },
+          { value: 'image/jpeg', label: 'JPEG' },
+          { value: 'image/png', label: 'PNG' },
+          { value: 'image/webp', label: 'WebP' },
+        ],
+        default: 'auto',
+      },
+    ],
+    example: { input: '' },
+    howto: [
+      'Drop the photo you want to share safely.',
+      'The cleaner re-encodes it from raw pixels — every metadata field is gone.',
+      'Download the clean copy and check the removal report.',
+    ],
+    faqs: [
+      {
+        q: 'What gets removed?',
+        a: 'Everything non-pixel: EXIF (including GPS location), XMP, PNG text chunks, JPEG comments, thumbnails and C2PA Content Credentials. The output is rebuilt from raw pixels only.',
+      },
+      {
+        q: 'Why remove metadata before sharing?',
+        a: 'Original photos leak your location, device and editing history. Cleaning protects privacy — and is standard practice before posting images publicly.',
+      },
+      {
+        q: 'Does quality suffer?',
+        a: 'JPEG outputs are re-encoded at maximum quality; PNG and WebP are lossless/visually identical. File size may change slightly.',
+      },
+    ],
+  },
+  {
+    slug: 'image-compressor',
+    name: 'Image Compressor',
+    title: 'Image Compressor & Converter — JPG, PNG, WebP (In-Browser, Private)',
+    description:
+      'Compress and convert images online — JPG, PNG, WebP, quality control, resize by max width. 100% in your browser: no upload, no limits, instant.',
+    inputLang: 'image',
+    outputLang: 'image',
+    inputKind: 'image',
+    fn: 'imageCompressor',
+    fixAi: false,
+    options: [
+      {
+        id: 'format',
+        label: 'Convert to',
+        type: 'select',
+        choices: [
+          { value: 'image/jpeg', label: 'JPEG' },
+          { value: 'image/webp', label: 'WebP (smaller)' },
+          { value: 'image/png', label: 'PNG (lossless)' },
+        ],
+        default: 'image/jpeg',
+      },
+      { id: 'quality', label: 'Quality (1-100)', type: 'number', default: 75, min: 1, max: 100 },
+      { id: 'maxWidth', label: 'Max width px (0 = keep)', type: 'number', default: 0, min: 0 },
+    ],
+    example: { input: '' },
+    howto: [
+      'Drop an image and pick the output format.',
+      'Set quality (75 is a sweet spot) and optionally resize by max width.',
+      'Download the compressed file — see exactly how much you saved.',
+    ],
+    faqs: [
+      {
+        q: 'Is there a file size limit?',
+        a: 'No server, no limit — compression runs on your device, so the ceiling is your device memory. Multi-megabyte photos are routine.',
+      },
+      {
+        q: 'JPEG vs WebP — which should I pick?',
+        a: 'WebP is typically 25-35% smaller at equal quality and supported by all modern browsers; JPEG remains the safest for older software.',
+      },
+      {
+        q: 'Is this private?',
+        a: 'Yes — the image is compressed locally in your browser and never uploaded.',
       },
     ],
   },

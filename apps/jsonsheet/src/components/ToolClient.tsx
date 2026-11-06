@@ -10,7 +10,12 @@ import {
   jsonToYaml, yamlToJson, flattenJson, jsonEscape, csvToHtml, jsonToQueryString,
   jsonToXml, jsonToJsonl, urlParamsToJson, base64Text,
 } from '@/lib/extra-converters';
+import ImageToolClient from '@/components/ImageToolClient';
 import type { OptionDef, ToolDef } from '@/data/tools';
+
+export default function ToolClient({ tool }: { tool: ToolDef }) {
+  return tool.inputKind === 'image' ? <ImageToolClient tool={tool} /> : <TextToolClient tool={tool} />;
+}
 
 type AnyOpts = Record<string, unknown>;
 
@@ -32,7 +37,7 @@ function normalizeOpts(raw: AnyOpts): AnyOpts {
   return out;
 }
 
-export default function ToolClient({ tool }: { tool: ToolDef }) {
+function TextToolClient({ tool }: { tool: ToolDef }) {
   const [input, setInput] = useState('');
   const [fixAi, setFixAi] = useState(true);
   const [opts, setOpts] = useState<AnyOpts>(() =>
@@ -113,6 +118,15 @@ export default function ToolClient({ tool }: { tool: ToolDef }) {
         <label className="opt" key={opt.id}>
           <input type="checkbox" checked={Boolean(value)} onChange={(e) => setOpt(opt.id, e.target.checked)} />
           {opt.label}
+        </label>
+      );
+    }
+    if (opt.type === 'number') {
+      return (
+        <label className="opt" key={opt.id}>
+          {opt.label}
+          <input type="number" value={Number(value)} min={opt.min} max={opt.max}
+            onChange={(e) => setOpt(opt.id, e.target.value === '' ? '' : Number(e.target.value))} />
         </label>
       );
     }

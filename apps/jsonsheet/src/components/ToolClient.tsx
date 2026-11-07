@@ -10,6 +10,9 @@ import {
   jsonToYaml, yamlToJson, flattenJson, jsonEscape, csvToHtml, jsonToQueryString,
   jsonToXml, jsonToJsonl, urlParamsToJson, base64Text,
 } from '@/lib/extra-converters';
+import {
+  subtitleConvert, subtitleShift, subtitleToText, subtitleToData,
+} from '@/lib/subtitles';
 import ImageToolClient from '@/components/ImageToolClient';
 import type { OptionDef, ToolDef } from '@/data/tools';
 
@@ -24,11 +27,12 @@ const FN: Record<string, (input: string, opts: AnyOpts) => ConvertResult> = {
   jsonToTs, csvToSql, jsonToSql, formatJson, tsvToJson, csvDedupe, csvTranspose,
   jsonToYaml, yamlToJson, flattenJson, jsonEscape, csvToHtml, jsonToQueryString,
   jsonToXml, jsonToJsonl, urlParamsToJson, base64Text,
+  subtitleConvert, subtitleShift, subtitleToText, subtitleToData,
 };
 
 const EXT: Record<string, string> = {
   csv: 'csv', json: 'json', markdown: 'md', sql: 'sql', ts: 'ts', text: 'txt',
-  yaml: 'yaml', html: 'html', xml: 'xml', jsonl: 'jsonl',
+  yaml: 'yaml', html: 'html', xml: 'xml', jsonl: 'jsonl', srt: 'srt', vtt: 'vtt',
 };
 
 function normalizeOpts(raw: AnyOpts): AnyOpts {

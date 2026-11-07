@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "test": "tsx scripts/test-converters.ts && tsx scripts/test-extra.ts && tsx scripts/test-image-tools.ts"
+    "test": "tsx scripts/test-converters.ts && tsx scripts/test-extra.ts && tsx scripts/test-image-tools.ts && tsx scripts/test-subtitles.ts"
   },
   "dependencies": {
     "next": "16.4.3",

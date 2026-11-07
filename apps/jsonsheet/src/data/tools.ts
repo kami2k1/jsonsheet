@@ -18,8 +18,8 @@ export interface ToolDef {
   name: string; // short card label
   title: string; // <title> + H1
   description: string; // meta description
-  inputLang: 'json' | 'csv' | 'markdown' | 'tsv' | 'text' | 'yaml' | 'image';
-  outputLang: 'csv' | 'json' | 'markdown' | 'sql' | 'ts' | 'text' | 'yaml' | 'html' | 'xml' | 'jsonl' | 'report' | 'image';
+  inputLang: 'json' | 'csv' | 'markdown' | 'tsv' | 'text' | 'yaml' | 'image' | 'subtitle';
+  outputLang: 'csv' | 'json' | 'markdown' | 'sql' | 'ts' | 'text' | 'yaml' | 'html' | 'xml' | 'jsonl' | 'report' | 'image' | 'srt' | 'vtt';
   inputKind?: 'text' | 'image'; // default: text
   fn: string;
   fixAi: boolean; // offer "fix AI output" preprocessing
@@ -1163,6 +1163,200 @@ score,99,98`,
       {
         q: 'Is this private?',
         a: 'Yes — the image is compressed locally in your browser and never uploaded.',
+      },
+    ],
+  },
+  {
+    slug: 'subtitle-converter',
+    name: 'SRT ↔ VTT',
+    title: 'SRT to VTT Converter (and VTT to SRT) — Free & In-Browser',
+    description:
+      'Convert SRT to VTT and VTT to SRT online — auto-detects the input format, keeps multiline cues, fixes timestamps. Free, instant, 100% in your browser.',
+    inputLang: 'subtitle',
+    outputLang: 'vtt',
+    fn: 'subtitleConvert',
+    fixAi: false,
+    options: [
+      {
+        id: 'output',
+        label: 'Output format',
+        type: 'select',
+        choices: [
+          { value: 'auto', label: 'Auto (the other format)' },
+          { value: 'srt', label: 'SRT' },
+          { value: 'vtt', label: 'WebVTT' },
+        ],
+        default: 'auto',
+      },
+    ],
+    example: {
+      input: `1
+00:00:01,000 --> 00:00:04,200
+Hello world
+second line
+
+2
+00:00:05,500 --> 00:00:07,000
+Subtitles rock!`,
+    },
+    howto: [
+      'Paste SRT or WebVTT — the format is detected automatically.',
+      'Output converts to the other format (or force one in the dropdown).',
+      'Copy or download the converted subtitles.',
+    ],
+    faqs: [
+      {
+        q: 'What differs between SRT and VTT?',
+        a: 'VTT (WebVTT) is the web standard: dot-millisecond timestamps, a WEBVTT header, styling/positioning support. SRT is the legacy default. Conversion maps timestamps and cues 1:1.',
+      },
+      {
+        q: 'Are cue styles and positions kept?',
+        a: 'Basic VTT inline tags survive; VTT STYLE/REGION blocks are dropped since SRT has no equivalent.',
+      },
+      {
+        q: 'Is the file uploaded anywhere?',
+        a: 'No — parsing and conversion run entirely in your browser.',
+      },
+    ],
+  },
+  {
+    slug: 'srt-time-shift',
+    name: 'Subtitle Shift',
+    title: 'Shift Subtitle Timing Online — Delay or Advance SRT/VTT — Free',
+    description:
+      'Shift SRT/VTT subtitle timing online — delay or advance all cues by seconds, keep or change the output format. Free, instant, 100% in-browser.',
+    inputLang: 'subtitle',
+    outputLang: 'srt',
+    fn: 'subtitleShift',
+    fixAi: false,
+    options: [
+      { id: 'seconds', label: 'Shift by seconds (− = sooner)', type: 'number', default: 2, min: -3600, max: 3600 },
+      {
+        id: 'output',
+        label: 'Output format',
+        type: 'select',
+        choices: [
+          { value: 'same', label: 'Same as input' },
+          { value: 'srt', label: 'SRT' },
+          { value: 'vtt', label: 'WebVTT' },
+        ],
+        default: 'same',
+      },
+    ],
+    example: {
+      input: `1
+00:00:01,000 --> 00:00:04,200
+Dialogue starts too early`,
+    },
+    howto: [
+      'Paste subtitles whose timing is off.',
+      'Set seconds to delay (+) or advance (−) every cue — negative values clamp at 0.',
+      'Download the resynced file in the same or a converted format.',
+    ],
+    faqs: [
+      {
+        q: 'My subtitles show 2 seconds early — what value?',
+        a: 'Enter +2 (delay). A negative value makes subtitles appear sooner.',
+      },
+      {
+        q: 'Does it shift only part of the file?',
+        a: 'Currently the whole file shifts uniformly. Per-cue resync between two sync points is on the roadmap.',
+      },
+      {
+        q: 'Can I convert to VTT while shifting?',
+        a: 'Yes — pick the output format in the dropdown.',
+      },
+    ],
+  },
+  {
+    slug: 'subtitle-to-text',
+    name: 'Subtitle → Text',
+    title: 'SRT to Text Converter — Extract Transcript from Subtitles Online',
+    description:
+      'Extract a clean text transcript from SRT/VTT subtitles — strips tags and timestamps, removes duplicate lines. Free, instant, 100% in-browser.',
+    inputLang: 'subtitle',
+    outputLang: 'text',
+    fn: 'subtitleToText',
+    fixAi: false,
+    options: [{ id: 'dedupe', label: 'Remove repeated lines', type: 'toggle', default: true }],
+    example: {
+      input: `1
+00:00:01,000 --> 00:00:03,000
+Welcome to
+the show
+
+2
+00:00:03,000 --> 00:00:05,000
+the show`,
+    },
+    howto: [
+      'Paste SRT/VTT subtitles.',
+      'Get a clean transcript — timestamps, index numbers and markup removed.',
+      'Toggle duplicate-line removal for rolled-over captions.',
+    ],
+    faqs: [
+      {
+        q: 'Why are lines duplicated in my transcript?',
+        a: 'Rolling captions repeat the previous line. "Remove repeated lines" collapses them into a readable transcript.',
+      },
+      {
+        q: 'Are HTML tags removed?',
+        a: 'Yes — <i>, <b>, <font> and ASS-style {\\…} overrides are stripped.',
+      },
+      {
+        q: 'Does the timing survive?',
+        a: 'No — this tool extracts pure text. Use SRT → CSV/JSON to keep timings.',
+      },
+    ],
+  },
+  {
+    slug: 'subtitle-to-csv',
+    name: 'Subtitle → CSV',
+    title: 'SRT to CSV / JSON Converter — Subtitle Timing Data Export — Free',
+    description:
+      'Convert SRT/VTT subtitles to CSV or JSON — start, end, duration and text per cue for analysis, spreadsheets and translation workflows. 100% in-browser.',
+    inputLang: 'subtitle',
+    outputLang: 'csv',
+    fn: 'subtitleToData',
+    fixAi: false,
+    options: [
+      {
+        id: 'format',
+        label: 'Output',
+        type: 'select',
+        choices: [
+          { value: 'csv', label: 'CSV' },
+          { value: 'json', label: 'JSON' },
+        ],
+        default: 'csv',
+      },
+    ],
+    example: {
+      input: `1
+00:00:01,000 --> 00:00:04,200
+Interview answer one
+
+2
+00:00:05,500 --> 00:00:07,000
+Interview answer two`,
+    },
+    howto: [
+      'Paste SRT/VTT subtitles.',
+      'Pick CSV (for Excel/Sheets) or JSON (for scripts and analysis).',
+      'Each row = one cue: start, end, duration and text.',
+    ],
+    faqs: [
+      {
+        q: 'Why convert subtitles to CSV/JSON?',
+        a: 'Timing data becomes analyzable: filter by duration, join with transcripts, feed translation pipelines or dashboards — the same data workflow as any JSONSheet tool.',
+      },
+      {
+        q: 'Are multiline cue texts kept?',
+        a: 'In CSV, cue newlines become spaces (one row per cue); JSON preserves the original newlines.',
+      },
+      {
+        q: 'Can I go back from CSV to SRT?',
+        a: 'Not yet — the CSV/JSON export is one-way today. Round-trip is on the roadmap.',
       },
     ],
   },

@@ -119,7 +119,7 @@ console.log('— tsvToJson —');
 console.log('— csv utilities —');
 {
   const d = csvDedupe('a,b\n1,2\n1,2\n3,4');
-  check('dedupe keeps first', d.ok && d.output === 'a,b\n1,2\n3,4\n' && (d.stats?.includes('loại bỏ 1') ?? false));
+  check('dedupe keeps first', d.ok && d.output === 'a,b\n1,2\n3,4\n' && (d.stats?.includes('removed 1') ?? false));
   const t = csvTranspose('name,Ada\nscore,99');
   check('transpose', t.ok && t.output === 'name,score\nAda,99\n');
 }

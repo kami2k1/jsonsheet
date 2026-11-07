@@ -185,7 +185,7 @@ export function subtitleShift(text: string, opts: SubtitleShiftOptions = {}): { 
   const shifted = shiftCues(cues, delta);
   const target = opts.output ?? 'same';
   const out = target === 'srt' ? toSRT(shifted) : target === 'vtt' ? toVTT(shifted) : detected === 'vtt' ? toVTT(shifted) : toSRT(shifted);
-  return { ok: true, output: out, stats: `${cues.length} cues · dịch ${delta > 0 ? '+' : ''}${delta}s` };
+  return { ok: true, output: out, stats: `${cues.length} cues · shifted ${delta > 0 ? '+' : ''}${delta}s` };
 }
 
 export function subtitleToText(text: string, opts: { dedupe?: boolean } = {}): { ok: boolean; output: string; error?: string; stats?: string } {
@@ -193,7 +193,7 @@ export function subtitleToText(text: string, opts: { dedupe?: boolean } = {}): {
   if (detected === 'unknown') return { ok: false, output: '', error: 'Không nhận diện được SRT hay VTT.' };
   const cues = detected === 'vtt' ? parseVTT(text) : parseSRT(text);
   const out = cuesToText(cues, opts.dedupe !== false);
-  return { ok: true, output: out, stats: `${out.split('\n').length - 1} dòng transcript` };
+  return { ok: true, output: out, stats: `${out.split('\n').length - 1} transcript lines` };
 }
 
 export interface SubtitleDataOptions {

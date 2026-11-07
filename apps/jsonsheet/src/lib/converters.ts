@@ -86,7 +86,7 @@ export function jsonToCsv(text: string, opts: JsonToCsvOptions = {}): ConvertRes
       if (entries.every(([, v]) => (v as Json[]).length === len)) {
         const rows: (string | number | boolean | null)[][] = opts.includeHeader === false ? [] : [keys];
         for (let i = 0; i < len; i++) rows.push(entries.map(([, v]) => toCell((v as Json[])[i])));
-        return ok(serializeCsv(rows, { delimiter }), `${rows.length} dòng × ${keys.length} cột`);
+        return ok(serializeCsv(rows, { delimiter }), `${rows.length} rows × ${keys.length} columns`);
       }
     }
     records = [opts.flatten === false ? data : flattenObject(data as Record<string, Json>)];
@@ -117,7 +117,7 @@ export function jsonToCsv(text: string, opts: JsonToCsvOptions = {}): ConvertRes
   const rows: (string | number | boolean | null)[][] =
     opts.includeHeader === false ? [] : [columns];
   for (const rec of flat) rows.push(columns.map((c) => toCell(rec[c])));
-  return ok(serializeCsv(rows, { delimiter }), `${flat.length} dòng × ${columns.length} cột`);
+  return ok(serializeCsv(rows, { delimiter }), `${flat.length} rows × ${columns.length} columns`);
 }
 
 /* ---------------------------- CSV → JSON ---------------------------- */
@@ -146,7 +146,7 @@ export function csvToJson(text: string, opts: CsvToJsonOptions = {}): ConvertRes
 
   if (!hasHeader) {
     const arr = rows.map((cells) => cells.map((c) => infer(c, parseNumbers)));
-    return ok(JSON.stringify(arr, null, 2), `${arr.length} dòng`);
+    return ok(JSON.stringify(arr, null, 2), `${arr.length} rows`);
   }
   const objs = rowsToObjects(rows, true).map((o) =>
     Object.fromEntries(Object.entries(o).map(([k, v]) => [k, infer(v, parseNumbers)])),
@@ -187,7 +187,7 @@ export function markdownToCsv(text: string, opts: { delimiter?: string } = {}): 
         .map((c) => c.trim()),
     );
   if (rows.length === 0) return fail('Không tìm thấy bảng Markdown (các dòng bắt đầu bằng |).');
-  return ok(serializeCsv(rows, { delimiter }), `${rows.length} dòng × ${rows[0].length} cột`);
+  return ok(serializeCsv(rows, { delimiter }), `${rows.length} rows × ${rows[0].length} columns`);
 }
 
 export function csvToMarkdown(text: string, opts: { delimiter?: string } = {}): ConvertResult {
@@ -201,7 +201,7 @@ export function csvToMarkdown(text: string, opts: { delimiter?: string } = {}): 
     `| ${head.map(() => '---').join(' | ')} |`,
     ...rows.slice(1).map((r) => `| ${pad(r).join(' | ')} |`),
   ];
-  return ok(lines.join('\n') + '\n', `${rows.length - 1} dòng × ${width} cột`);
+  return ok(lines.join('\n') + '\n', `${rows.length - 1} rows × ${width} columns`);
 }
 
 /* ---------------------------- JSON → TypeScript ---------------------------- */
@@ -363,7 +363,7 @@ function buildSql(
   const insert = `INSERT INTO ${sqlIdent(table, dialect)} (${idents.join(', ')}) VALUES`;
   const values = rows.map((r) => `  (${r.map(sqlValue).join(', ')});`);
   parts.push(`${insert}\n${values.join('\n')}`);
-  return ok(parts.join('\n\n') + '\n', `${rows.length} INSERT, ${columns.length} cột`);
+  return ok(parts.join('\n\n') + '\n', `${rows.length} INSERTs, ${columns.length} columns`);
 }
 
 /* ---------------------------- Format/Validate JSON ---------------------------- */
@@ -411,7 +411,7 @@ export function formatJson(text: string, opts: FormatJsonOptions = {}): ConvertR
       : v && typeof v === 'object'
         ? Object.keys(v).length
         : 0;
-  return ok(out, `hợp lệ — ${count(data)} key/element cấp gốc`);
+  return ok(out, `valid — ${count(data)} top-level keys/elements`);
 }
 
 /* ---------------------------- TSV → JSON ---------------------------- */
@@ -437,7 +437,7 @@ export function csvDedupe(text: string, opts: { delimiter?: string } = {}): Conv
     seen.add(key);
     unique.push(r);
   }
-  return ok(serializeCsv(unique, { delimiter: opts.delimiter ?? ',' }), `loại bỏ ${removed} dòng trùng, còn ${unique.length}`);
+  return ok(serializeCsv(unique, { delimiter: opts.delimiter ?? ',' }), `removed ${removed} duplicate rows, ${unique.length} left`);
 }
 
 export function csvTranspose(text: string, opts: { delimiter?: string } = {}): ConvertResult {
@@ -448,7 +448,7 @@ export function csvTranspose(text: string, opts: { delimiter?: string } = {}): C
   for (let c = 0; c < width; c++) {
     out.push(rows.map((r) => r[c] ?? ''));
   }
-  return ok(serializeCsv(out, { delimiter: opts.delimiter ?? ',' }), `${width} dòng × ${rows.length} cột sau chuyển vị`);
+  return ok(serializeCsv(out, { delimiter: opts.delimiter ?? ',' }), `${width} rows × ${rows.length} columns after transpose`);
 }
 
 // Re-export for tool pages

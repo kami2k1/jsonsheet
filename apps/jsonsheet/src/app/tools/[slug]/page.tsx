@@ -87,6 +87,13 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
           </details>
         ))}
 
+        <h2>Learn more</h2>
+        <p>
+          Working with messy AI output? Read the guide:{' '}
+          <a href="/guides/chatgpt-json-to-csv/">Convert ChatGPT / Claude output to CSV the clean way</a> — or browse{' '}
+          <a href="/guides/">all guides</a>.
+        </p>
+
         <h2>Related tools</h2>
       </section>
 

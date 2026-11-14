@@ -1171,7 +1171,7 @@ score,99,98`,
     name: 'SRT ↔ VTT',
     title: 'SRT to VTT Converter (and VTT to SRT) — Free & In-Browser',
     description:
-      'Convert SRT to VTT and VTT to SRT online — auto-detects the input format, keeps multiline cues, fixes timestamps. Free, instant, 100% in your browser.',
+      'Convert SRT to VTT and VTT to SRT online — auto-detects the input format, keeps multiline cues, fixes timestamps. Free, no signup, no upload: 100% in your browser.',
     inputLang: 'subtitle',
     outputLang: 'vtt',
     fn: 'subtitleConvert',
